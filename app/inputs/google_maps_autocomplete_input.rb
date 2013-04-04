@@ -10,7 +10,13 @@ class GoogleMapsAutocompleteInput < SimpleForm::Inputs::StringInput
 
   def script_text(gmap_id, tag)
     "$(document).ready(function(){
-      window.gmap = new GoogleMap({selector: '##{gmap_id}'});
+      if(typeof google == 'undefined')
+        return;
+      var selector = '#{gmap_id}';
+      if(selector.length > 0){
+        selector = '#' + selector;
+      }
+      window.gmap = new GoogleMap({selector: selector});
       input = $('#{tag}');
       var id = input.attr('id');
       var location = input.val();
