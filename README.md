@@ -35,14 +35,17 @@ And include it in your ```application.js``` file:
 ```js
 (new GoogleMap()).apply()
 ```
-By default it will be applied to the element with id '#gmaps-canvas', but it can be customized.
+By default it will be applied to the element with id '#gmaps-canvas', but it can be customized:
+```js
+(new GoogleMap({selector: '#gmaps'})).apply()
+```
 
-2) You can store selected point (latitude and longitude) in input fields:
+2) Store selected point (latitude and longitude) in input fields:
 ```js
 new GoogleMap({longitudeInput: '#longitude_input', latitudeInput: '#latitude_input'})
 ```
 
-3) You can set preferred location from your code:
+3) Set preferred location from your code:
 ```js
 gmap = new GoogleMap()
 gmap.apply()
@@ -51,18 +54,26 @@ gmap.geocodeLookup('address', 'New York')
 gmap.geocodeLookup('latLng', new google.maps.LatLng(51.751724,-1.255284))
 ```
 
-4) We can prevent users from changing location:
+4) Prevent users from changing location:
 ```js
 new GoogleMap({immutable: true})
 ```
 
-5) You can integrate map with jquery-autocomplete:
+5) Integrate map with jquery-autocomplete:
 ```js
 gmap = new GoogleMap()
 autoComplete = new GmapAutocomplete('#gmaps-input-address', gmap)
 autoComplete.apply()
 gmap.apply()
 ```
+6) Add errors (these - are defaults):
+```
+(new GoogleMap({errorField: "#gmaps-error"})).apply() // default errorField is "#gmaps-error"
+GmapErrors.wrongInputText = "Sorry, something went wrong. Try again!"
+GmapErrors.incorrectLatLngText = "Woah... that's pretty remote! You're going to have to manually enter a place name."
+GmapErrors.incorrectAddressText = function(value){"Sorry! We couldn't find " + value + ". Try a different search term, or click the map."}
+```
+
 ## Contributing
 
 1. Fork it
