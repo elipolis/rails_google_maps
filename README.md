@@ -3,6 +3,7 @@
 * Gem provides small js library to simplify communication with google maps.
 * jQuery Autocomplete integration.
 
+Something was taken from https://github.com/rjshade/gmaps-autocomplete
 
 ## Installation
 
@@ -25,8 +26,10 @@ Haml example:
     %script{:src => "http://maps.googleapis.com/maps/api/js?sensor=false", :type => "text/javascript"}
 ```
 
-And include it in your ```application.js``` file:
-```//= require rails_google_maps```
+And include it in your ```application.js``` file after jquery:
+```
+//= require rails_google_maps
+```
 
 
 ## Usage
@@ -67,7 +70,7 @@ autoComplete.apply()
 gmap.apply()
 ```
 6) Add errors (these - are defaults):
-```
+```js
 (new GoogleMap({errorField: "#gmaps-error"})).apply() // default errorField is "#gmaps-error"
 GmapErrors.wrongInputText = "Sorry, something went wrong. Try again!"
 GmapErrors.incorrectLatLngText = "Woah... that's pretty remote! You're going to have to manually enter a place name."
