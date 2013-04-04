@@ -25,7 +25,7 @@ class root.GoogleMap
   constructor: (options = {}, gmapOptions = {}, @mapSelector = "#gmaps-canvas", @errorField = '#gmaps-error')->
     @gmapOptions = $.extend {}, GoogleMap.defaultGmapOptions, gmapOptions
     @immutable = true if options['immutable']
-    if options['saveLatLang']
+    if options['longitudeInput'] and options['latitudeInput']
       @saveLangLat = true
       @longitudeInput = options['longitudeInput']
       @latitudeInput = options['latitudeInput']
@@ -48,7 +48,7 @@ class root.GoogleMap
   applied: ()->
     @_applied
 
-  geocodeLookup: (type, value, update = false)->
+  geocodeLookup: (type, value, update = true)->
     request = {}
     request[type] = value
     self = this
@@ -63,10 +63,10 @@ class root.GoogleMap
     self = this
     return if @immutable
     google.maps.event.addListener @marker, 'dragend', () ->
-      self.geocodeLookup 'latLng', self.marker.getPosition()
+      self.geocodeLookup 'latLng', self.marker.getPosition(), false
     google.maps.event.addListener @map, 'click', (event) ->
       self.marker.setPosition event.latLng
-      self.geocodeLookup 'latLng', event.latLng
+      self.geocodeLookup 'latLng', event.latLng, false
 
   _succeed: (results, update)->
     if results[0]

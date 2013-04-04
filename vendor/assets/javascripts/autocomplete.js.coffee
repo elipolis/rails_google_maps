@@ -52,7 +52,7 @@ class root.GmapAutocomplete extends Autocomplete
     self = this
     $(@selector).bind 'keydown', (event)->
       if event.keyCode == 13
-        self.gmap.geocodeLookup  'address', $(self.selector).val(), true
+        self.gmap.geocodeLookup  'address', $(self.selector).val()
         $(self.selector).autocomplete "disable"
       else
         $(self.selector).autocomplete "enable"
