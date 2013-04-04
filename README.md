@@ -21,7 +21,7 @@ Or install it yourself as:
 To use this gem you need to require google map script on the top of your layout(before including application.js).
 Haml example:
 ```ruby
-- unless Rails.env == 'test' // we don't like to load gmaps while testing
+- unless Rails.env == 'test' # we don't like to load gmaps while testing
     %script{:src => "http://maps.googleapis.com/maps/api/js?sensor=false", :type => "text/javascript"}
 ```
 
