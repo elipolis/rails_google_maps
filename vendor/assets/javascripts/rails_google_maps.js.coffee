@@ -11,6 +11,8 @@ class root.GoogleMap
 
   #defines whether user can change map pin or not
   immutable = false
+  mapSelector = "#gmaps-canvas"
+  errorField = "#gmaps-error"
 
   _applied: false
 
@@ -22,9 +24,11 @@ class root.GoogleMap
 
   # options: object options
   # gmapOptions: google map api options
-  constructor: (options = {}, gmapOptions = {}, @mapSelector = "#gmaps-canvas", @errorField = '#gmaps-error')->
+  constructor: (options = {}, gmapOptions = {})->
     @gmapOptions = $.extend {}, GoogleMap.defaultGmapOptions, gmapOptions
     @immutable = true if options['immutable']
+    @mapSelector = options['selector'] if options['selector']
+    @errorField = options['errorField'] if options['errorField']
     if options['longitudeInput'] and options['latitudeInput']
       @saveLangLat = true
       @longitudeInput = options['longitudeInput']
