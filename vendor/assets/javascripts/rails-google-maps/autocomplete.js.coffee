@@ -31,19 +31,21 @@ class root.Autocomplete
 class root.GmapAutocomplete extends Autocomplete
 
   constructor: (@selector, @gmap)->
+    self = this
+    @gmap.onSucceed.push (address)->
+      $(self.selector).val address
 
   source: (self)->
     (request, response)->
-      self.gmap.geocoder.geocode {'address': request.term }, (results, status)->
+      self.gmap.searchGeocodes request.term, (results)->
         response $.map results, (item) ->
-            label: item.formatted_address
-            value: item.formatted_address
-            geocode: item
+          label: item.formatted_address
+          value: item.formatted_address
+          geocode: item
 
   select: (self)->
     (event, ui) ->
-      self.gmap.updateUi  ui.item.value, ui.item.geocode.geometry.location
-      self.gmap.updateMap ui.item.geocode.geometry
+      self.gmap.update ui.item.geocode
 
   afterApply: ()->
     this._addKeyDownHandlers()
@@ -52,7 +54,7 @@ class root.GmapAutocomplete extends Autocomplete
     self = this
     $(@selector).bind 'keydown', (event)->
       if event.keyCode == 13
-        self.gmap.geocodeLookup  'address', $(self.selector).val()
+        self.gmap.setMarker  'address', $(self.selector).val()
         $(self.selector).autocomplete "disable"
       else
         $(self.selector).autocomplete "enable"

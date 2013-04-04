@@ -7,12 +7,11 @@ return unless google?
 #   gmap.apply()
 class root.GoogleMap
 
-  inputField: '#gmaps-input-address'
-
   #defines whether user can change map pin or not
-  immutable = false
-  mapSelector = "#gmaps-canvas"
-  errorField = "#gmaps-error"
+  immutable: false
+  mapSelector: "#gmaps-canvas"
+  errorField: "#gmaps-error"
+  onSucceed: []
 
   _applied: false
 
@@ -42,17 +41,10 @@ class root.GoogleMap
     this._addListeners()
     @_applied = true
 
-  updateMap: (geometry)->
-    @map.fitBounds( geometry.viewport )
-    @marker.setPosition( geometry.location )
-
-  updateUi: (address, latLng)->
-    $(@inputField).val(address)
-
   applied: ()->
     @_applied
 
-  geocodeLookup: (type, value, update = true)->
+  setMarker: (type, value, update = true)->
     request = {}
     request[type] = value
     self = this
@@ -63,19 +55,29 @@ class root.GoogleMap
       else
         self._failed(update, type, value)
 
+  searchGeocodes: (term, callback)->
+    @geocoder.geocode {'address': term }, (results, status)->
+      callback(results, status)
+
+
+  update: (geocode)->
+    @map.fitBounds geocode.geometry.viewport
+    @marker.setPosition geocode.geometry.location
+
   _addListeners: ()->
     self = this
     return if @immutable
     google.maps.event.addListener @marker, 'dragend', () ->
-      self.geocodeLookup 'latLng', self.marker.getPosition(), false
+      self.setMarker 'latLng', self.marker.getPosition(), false
     google.maps.event.addListener @map, 'click', (event) ->
       self.marker.setPosition event.latLng
-      self.geocodeLookup 'latLng', event.latLng, false
+      self.setMarker 'latLng', event.latLng, false
 
   _succeed: (results, update)->
     if results[0]
-      this.updateUi results[0].formatted_address, results[0].geometry.location
-      this.updateMap(results[0].geometry) if update
+      this.update(results[0]) if update
+      $.map @onSucceed, (callback)->
+        callback(results[0].formatted_address)
       this._saveLatLang(results[0].geometry.location.lat(), results[0].geometry.location.lng()) if @saveLangLat
     else
       @gmapErrors.wrongInputError()
@@ -86,7 +88,6 @@ class root.GoogleMap
       @gmapErrors.incorrectAddress(value)
     else
       @gmapErrors.incorrectLatlng()
-      this.updateUi('', value)
 
   _saveLatLang: (lat, long)->
     $(@latitudeInput).val(lat)
