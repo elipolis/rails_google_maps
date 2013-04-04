@@ -28,7 +28,7 @@ Haml example:
 
 And include it in your ```application.js``` file after jquery:
 ```
-//= require rails_google_maps
+//= require rails-google-maps/google_maps
 ```
 
 
@@ -63,6 +63,11 @@ new GoogleMap({immutable: true})
 ```
 
 5) Integrate map with jquery-autocomplete:
+in 'application.js':
+```
+//= require rails-google-maps/autocomplete
+```
+in client code:
 ```js
 gmap = new GoogleMap()
 autoComplete = new GmapAutocomplete('#gmaps-input-address', gmap)
