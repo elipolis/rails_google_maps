@@ -33,7 +33,15 @@ And include it in your ```application.js``` file after jquery:
 
 
 ## Usage
-
+####SimpleForm usage:
+```erb
+/*NOTE: gmap-canvas - default value and can be ommited*/
+<%= f.input :address, as: :google_maps_autocomplete, input_html: { gmap_id: 'gmap_canvas' } %> 
+...
+<div id="gmap_canvas"></div>
+```
+Additionally on edit address point will be marked on the map.
+####Javascript usage:
 1) Apply google map to div element where map should appear:
 ```js
 (new GoogleMap()).apply()
