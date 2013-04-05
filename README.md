@@ -47,6 +47,8 @@ in template:
 <div id="gmap_canvas"></div>
 ```
 Additionally on edit address point will be marked on the map.
+
+That is all, if you want to use it without SimpleForm read next part.
 ####Javascript usage:
 1) Apply google map to div element where map should appear:
 ```js
