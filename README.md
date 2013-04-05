@@ -39,7 +39,7 @@ in ```application.js```:
 ```
 //= require rails-google-maps/autocomplete
 ```
-tempalte:
+in template:
 ```erb
 /*NOTE: gmap-canvas - default value and can be ommited*/
 <%= f.input :address, as: :google_maps_autocomplete, input_html: { gmap_id: 'gmap_canvas' } %> 
