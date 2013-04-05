@@ -66,9 +66,9 @@ new GoogleMap({longitudeInput: '#longitude_input', latitudeInput: '#latitude_inp
 ```js
 gmap = new GoogleMap()
 gmap.apply()
-gmap.geocodeLookup('address', 'New York')
+gmap.setMarker('address', 'New York')
 //or
-gmap.geocodeLookup('latLng', new google.maps.LatLng(51.751724,-1.255284))
+gmap.setMarker('latLng', new google.maps.LatLng(51.751724,-1.255284))
 ```
 
 4) Prevent users from changing location:
