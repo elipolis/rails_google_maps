@@ -25,6 +25,9 @@ class root.GoogleMap
   # gmapOptions: google map api options
   constructor: (options = {}, gmapOptions = {})->
     @gmapOptions = $.extend {}, GoogleMap.defaultGmapOptions, gmapOptions
+    this.setOptions options
+
+  setOptions: (options)->
     @immutable = true if options['immutable']
     @mapSelector = options['selector'] if options['selector']
     @errorField = options['errorField'] if options['errorField']
@@ -32,6 +35,7 @@ class root.GoogleMap
       @saveLangLat = true
       @longitudeInput = options['longitudeInput']
       @latitudeInput = options['latitudeInput']
+
 
   apply: ()->
     @map = new google.maps.Map $(@mapSelector)[0], @gmapOptions
