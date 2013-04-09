@@ -26,9 +26,6 @@ class GoogleMapsAutocompleteInput < SimpleForm::Inputs::StringInput
         gmap.apply();
         gmapAutocomplete.apply();
       }
-      if(location.length > 0){
-        gmap.setMarker('address', location);
-      }
     })"
   end
 end

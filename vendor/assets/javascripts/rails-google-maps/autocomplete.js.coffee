@@ -48,7 +48,11 @@ class root.GmapAutocomplete extends Autocomplete
       self.gmap.update ui.item.geocode
 
   afterApply: ()->
+    this.syncWithMap()
     this._addKeyDownHandlers()
+
+  syncWithMap: ()->
+    @gmap.setMarker('address', $(@selector).val()) if $(@selector).val()
 
   _addKeyDownHandlers: ()->
     self = this
