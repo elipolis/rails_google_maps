@@ -48,7 +48,7 @@ class root.GoogleMap
   applied: ()->
     @_applied
 
-  setMarker: (type, value, update = true)->
+  setMarker: (type, value, update = true, afterCallback = ()->)->
     request = {}
     request[type] = value
     self = this
@@ -58,6 +58,7 @@ class root.GoogleMap
         self._succeed(results, update)
       else
         self._failed(update, type, value)
+      afterCallback()
 
   searchGeocodes: (term, callback)->
     @geocoder.geocode {'address': term }, (results, status)->
