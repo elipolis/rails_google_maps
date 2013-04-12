@@ -1,4 +1,5 @@
 class GoogleMapsAutocompleteInput < SimpleForm::Inputs::StringInput
+  include ActionView::Helpers::JavaScriptHelper
   include ActionView::Helpers::TagHelper
   def input
     gmap_id = input_html_options.delete(:gmap_id)
@@ -6,7 +7,7 @@ class GoogleMapsAutocompleteInput < SimpleForm::Inputs::StringInput
     lat_id = input_html_options.key?(:lat_id) ? input_html_options.delete(:lat_id) : nil
     lng_id = input_html_options.key?(:lng_id) ? input_html_options.delete(:lng_id) : nil
     input = @builder.text_field(attribute_name, input_html_options)
-    (input + content_tag('script', script_text(gmap_id, input, apply, lat_id, lng_id).html_safe)).html_safe
+    (input + javascript_tag(script_text(gmap_id, input, apply, lat_id, lng_id))).html_safe
   end
 
   private
