@@ -12,7 +12,7 @@ class root.GoogleMap
   mapSelector: "#gmaps-canvas"
   errorField: "#gmaps-error"
   onSucceed: []
-
+  mapless: false
   _applied: false
 
   @defaultGmapOptions: {
@@ -38,9 +38,12 @@ class root.GoogleMap
 
 
   apply: ()->
-    @map = new google.maps.Map $(@mapSelector)[0], @gmapOptions
+    if($(@mapSelector).length > 0)
+      @map = new google.maps.Map $(@mapSelector)[0], @gmapOptions
+      @marker = new google.maps.Marker {map: @map, draggable: true}
+    else
+      @mapless = true
     @geocoder = new google.maps.Geocoder()
-    @marker = new google.maps.Marker {map: @map, draggable: true}
     @gmapErrors = new GmapErrors @errorField
     this._addListeners()
     @_applied = true
@@ -66,37 +69,44 @@ class root.GoogleMap
 
 
   update: (geocode)->
-    @map.fitBounds geocode.geometry.viewport
-    @marker.setPosition geocode.geometry.location
+    unless @mapless
+      @map.fitBounds geocode.geometry.viewport
+      @marker.setPosition geocode.geometry.location
+    this.saveLatLang(geocode.geometry) if @saveLangLat
 
   _addListeners: ()->
     self = this
     return if @immutable
-    google.maps.event.addListener @marker, 'dragend', () ->
-      self.setMarker 'latLng', self.marker.getPosition(), false
-    google.maps.event.addListener @map, 'click', (event) ->
-      self.marker.setPosition event.latLng
-      self.setMarker 'latLng', event.latLng, false
+    unless @mapless
+      google.maps.event.addListener @marker, 'dragend', () ->
+        self.setMarker 'latLng', self.marker.getPosition(), false
+      google.maps.event.addListener @map, 'click', (event) ->
+        self.marker.setPosition event.latLng
+        self.setMarker 'latLng', event.latLng, false
 
   _succeed: (results, update)->
     if results[0]
       this.update(results[0]) if update
       $.map @onSucceed, (callback)->
         callback(results[0].formatted_address)
-      this._saveLatLang(results[0].geometry.location.lat(), results[0].geometry.location.lng()) if @saveLangLat
+      this.saveLatLang(results[0].geometry) if @saveLangLat
     else
       @gmapErrors.wrongInputError()
 
   _failed: (update, type, value)->
-    this._saveLatLang('', '') if @saveLangLat
+    this.clearLatLng() if @saveLangLat
     if type is 'address'
       @gmapErrors.incorrectAddress(value)
     else
       @gmapErrors.incorrectLatlng()
 
-  _saveLatLang: (lat, long)->
-    $(@latitudeInput).val(lat)
-    $(@longitudeInput).val(long)
+  saveLatLang: (geometry)->
+    $(@latitudeInput).val(geometry.location.lat())
+    $(@longitudeInput).val(geometry.location.lng())
+
+  clearLatLng: ()->
+    $(@latitudeInput).val('')
+    $(@longitudeInput).val('')
 
 # Class for displaying Gmap Errors.
 # All the errors can be customised
