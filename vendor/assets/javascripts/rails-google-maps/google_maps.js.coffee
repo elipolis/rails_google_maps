@@ -33,8 +33,7 @@ class root.GoogleMap
     @errorField = options['errorField'] if options['errorField']
     if options['longitudeInput'] and options['latitudeInput']
       @saveLangLat = true
-      @longitudeInput = options['longitudeInput']
-      @latitudeInput = options['latitudeInput']
+      @latLng = new LatLngContainer(options['latitudeInput'], options['longitudeInput'])
 
 
   apply: ()->
@@ -45,66 +44,50 @@ class root.GoogleMap
       @mapless = true
     @geocoder = new google.maps.Geocoder()
     @gmapErrors = new GmapErrors @errorField
-    @_addListeners()
+    @_addListeners() unless @immutable or @mapless
     @_applied = true
 
   applied: ()->
     @_applied
 
-  setMarker: (type, value, update = true, afterCallback = ()->)->
+  setMarker: (type, value, focusOnMarker = true, afterCallback = ()->)->
     request = {}
     request[type] = value
     @geocoder.geocode request, (results, status)=>
-      @gmapErrors.cleanErrors()
-      if status is google.maps.GeocoderStatus.OK
-        @_succeed(results, update)
+      if status is google.maps.GeocoderStatus.OK and results[0]
+        @_succeed results, focusOnMarker
       else
-        @_failed(update, type, value)
+        @_failed(type, value)
       afterCallback()
 
   searchGeocodes: (term, callback)->
     @geocoder.geocode {'address': term }, (results, status)->
       callback(results, status)
 
-
   update: (geocode)->
     unless @mapless
       @map.fitBounds geocode.geometry.viewport
       @marker.setPosition geocode.geometry.location
-    this.saveLatLang(geocode.geometry) if @saveLangLat
+    @latLng.store(geocode.geometry) if @saveLangLat
 
   _addListeners: ()->
-    return if @immutable
-    unless @mapless
-      google.maps.event.addListener @marker, 'dragend', () =>
-        @setMarker 'latLng', @marker.getPosition(), false
-      google.maps.event.addListener @map, 'click', (event) =>
-        @marker.setPosition event.latLng
-        @setMarker 'latLng', event.latLng, false
+    google.maps.event.addListener @marker, 'dragend', () =>
+      @setMarker 'latLng', @marker.getPosition(), false
+    google.maps.event.addListener @map, 'click', (event) =>
+      @marker.setPosition event.latLng
+      @setMarker 'latLng', event.latLng, false
 
-  _succeed: (results, update)->
-    if results[0]
-      this.update(results[0]) if update
-      $.map @onSucceed, (callback)->
-        callback(results[0].formatted_address)
-      this.saveLatLang(results[0].geometry) if @saveLangLat
-    else
-      @gmapErrors.wrongInputError()
+  _succeed: (results, focusOnMarker)->
+    @update(results[0]) if focusOnMarker
+    $.map @onSucceed, (callback)->
+      callback(results[0].formatted_address)
+    @latLng.store(results[0].geometry) if @saveLangLat
 
-  _failed: (update, type, value)->
-    this.clearLatLng() if @saveLangLat
+  _failed: (type, value)->
     if type is 'address'
       @gmapErrors.incorrectAddress(value)
     else
       @gmapErrors.incorrectLatlng()
-
-  saveLatLang: (geometry)->
-    $(@latitudeInput).val(geometry.location.lat())
-    $(@longitudeInput).val(geometry.location.lng())
-
-  clearLatLng: ()->
-    $(@latitudeInput).val('')
-    $(@longitudeInput).val('')
 
 # Class for displaying Gmap Errors.
 # All the errors can be customised
@@ -114,25 +97,22 @@ class root.GoogleMap
 #  GmapErrors.incorrectAddressText(value)  - callback, incorrect address can be used inside
 class root.GmapErrors
 
-  @wrongInputText: "Sorry, something went wrong. Try again!"
   @incorrectLatLngText: "Woah... that's pretty remote! You're going to have to manually enter a place name."
 
   constructor: (@errorField)->
 
   incorrectAddress: (value)->
-    this.setError(GmapErrors.incorrectAddressText(value))
-    this.show()
+    @cleanErrors()
+    @setError(GmapErrors.incorrectAddressText(value))
+    @show()
 
   incorrectLatlng: ()->
-    this.setError(@incorrectLatLngText)
-    this.show()
+    @cleanErrors()
+    @setError(@incorrectLatLngText)
+    @show()
 
   @incorrectAddressText: (value)->
     "Sorry! We couldn't find #{value}. Try a different search term, or click the map."
-
-  wrongInputError: ()->
-    @setError(@wrongInputText)
-    @show()
 
   cleanErrors: ()->
     @setError('')
@@ -146,6 +126,20 @@ class root.GmapErrors
 
   setError: (text)->
     $(@errorField).html(text)
+
+class root.LatLngContainer
+  constructor: (latitudeInput, longitudeInput)->
+    @latitudeInput = $(latitudeInput)
+    @longitudeInput = $(longitudeInput)
+
+  store: (geometry)->
+    @latitudeInput.val(geometry.location.lat())
+    @longitudeInput.val(geometry.location.lng())
+
+  clear: ()->
+    @latitudeInput.val('')
+    @longitudeInput.val('')
+
 
 
 

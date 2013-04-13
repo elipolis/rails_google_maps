@@ -31,7 +31,7 @@ class GoogleMapsAutocompleteInput < SimpleForm::Inputs::StringInput
       }
       var latId = '#{lat_id.to_s}', lngId = '#{lng_id.to_s}';
       if(latId && lngId){
-        gmap.setOptions({longitudeInput: lngId, latitudeInput: latId});
+        gmap.setOptions({longitudeInput: '#' + lngId, latitudeInput: '#' + latId});
       }
     })"
   end
