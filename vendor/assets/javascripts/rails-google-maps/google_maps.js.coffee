@@ -45,7 +45,7 @@ class root.GoogleMap
       @mapless = true
     @geocoder = new google.maps.Geocoder()
     @gmapErrors = new GmapErrors @errorField
-    this._addListeners()
+    @_addListeners()
     @_applied = true
 
   applied: ()->
@@ -54,13 +54,12 @@ class root.GoogleMap
   setMarker: (type, value, update = true, afterCallback = ()->)->
     request = {}
     request[type] = value
-    self = this
-    @geocoder.geocode request, (results, status)->
-      self.gmapErrors.cleanErrors()
+    @geocoder.geocode request, (results, status)=>
+      _this.gmapErrors.cleanErrors()
       if status is google.maps.GeocoderStatus.OK
-        self._succeed(results, update)
+        _this._succeed(results, update)
       else
-        self._failed(update, type, value)
+        _this._failed(update, type, value)
       afterCallback()
 
   searchGeocodes: (term, callback)->
@@ -75,14 +74,13 @@ class root.GoogleMap
     this.saveLatLang(geocode.geometry) if @saveLangLat
 
   _addListeners: ()->
-    self = this
     return if @immutable
     unless @mapless
-      google.maps.event.addListener @marker, 'dragend', () ->
-        self.setMarker 'latLng', self.marker.getPosition(), false
-      google.maps.event.addListener @map, 'click', (event) ->
-        self.marker.setPosition event.latLng
-        self.setMarker 'latLng', event.latLng, false
+      google.maps.event.addListener @marker, 'dragend', () =>
+        _this.setMarker 'latLng', _this.marker.getPosition(), false
+      google.maps.event.addListener @map, 'click', (event) =>
+        _this.marker.setPosition event.latLng
+        _this.setMarker 'latLng', event.latLng, false
 
   _succeed: (results, update)->
     if results[0]
@@ -133,12 +131,12 @@ class root.GmapErrors
     "Sorry! We couldn't find #{value}. Try a different search term, or click the map."
 
   wrongInputError: ()->
-    this.setError(@wrongInputText)
-    this.show()
+    @setError(@wrongInputText)
+    @show()
 
   cleanErrors: ()->
-    this.setError('')
-    this.hide()
+    @setError('')
+    @hide()
 
   show: ()->
     $(@errorField).show()

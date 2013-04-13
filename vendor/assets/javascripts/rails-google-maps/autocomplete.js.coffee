@@ -13,11 +13,10 @@ class root.Autocomplete
     @$el = $(@selector)
 
   apply: ()->
-    self = this
     $(@selector).autocomplete
-      source: self.source(self)
-      select: self.select(self)
-      change: self.change(self)
+      source: @source()
+      select: @select()
+      change: @change()
     this.afterApply()
 
   afterApply: ()->
@@ -31,35 +30,33 @@ class root.Autocomplete
 class root.GmapAutocomplete extends Autocomplete
 
   constructor: (@selector, @gmap)->
-    self = this
-    @gmap.onSucceed.push (address)->
-      $(self.selector).val address
+    @gmap.onSucceed.push (address)=>
+      $(_this.selector).val address
 
-  source: (self)->
-    (request, response)->
-      self.gmap.searchGeocodes request.term, (results)->
+  source: ()->
+    (request, response) =>
+      _this.gmap.searchGeocodes request.term, (results)->
         response $.map results, (item) ->
           label: item.formatted_address
           value: item.formatted_address
           geocode: item
 
-  select: (self)->
-    (event, ui) ->
-      self.gmap.update ui.item.geocode
+  select: ()->
+    (event, ui) =>
+      _this.gmap.update ui.item.geocode
 
   afterApply: ()->
-    this.syncWithMap()
-    this._addKeyDownHandlers()
+    @syncWithMap()
+    @_addKeyDownHandlers()
 
   syncWithMap: ()->
     @gmap.setMarker('address', $(@selector).val()) if $(@selector).val()
 
   _addKeyDownHandlers: ()->
-    self = this
-    $(@selector).bind 'keydown', (event)->
+    $(@selector).bind 'keydown', (event)=>
       if event.keyCode == 13
-        self.gmap.setMarker  'address', $(self.selector).val()
-        $(self.selector).autocomplete "disable"
+        _this.gmap.setMarker  'address', $(_this.selector).val()
+        $(_this.selector).autocomplete "disable"
       else
-        $(self.selector).autocomplete "enable"
+        $(_this.selector).autocomplete "enable"
 
