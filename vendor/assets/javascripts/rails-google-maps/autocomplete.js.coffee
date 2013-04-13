@@ -1,12 +1,10 @@
 root = exports ? this
 
 class root.Autocomplete
-  source: ()->
+  source: ()=>
     []
-  select: ()->
-    ()->
-  change: ()->
-    ()->
+  select: ()=>
+  change: ()=>
   minChars: 2
 
   constructor: (@selector)->
@@ -14,9 +12,9 @@ class root.Autocomplete
 
   apply: ()->
     $(@selector).autocomplete
-      source: @source()
-      select: @select()
-      change: @change()
+      source: @source
+      select: @select
+      change: @change
     this.afterApply()
 
   afterApply: ()->
@@ -33,17 +31,15 @@ class root.GmapAutocomplete extends Autocomplete
     @gmap.onSucceed.push (address)=>
       $(@selector).val address
 
-  source: ()->
-    (request, response) =>
-      @gmap.searchGeocodes request.term, (results)->
-        response $.map results, (item) ->
-          label: item.formatted_address
-          value: item.formatted_address
-          geocode: item
+  source: (request, response) =>
+    @gmap.searchGeocodes request.term, (results)->
+      response $.map results, (item) ->
+        label: item.formatted_address
+        value: item.formatted_address
+        geocode: item
 
-  select: ()->
-    (event, ui) =>
-      @gmap.update ui.item.geocode
+  select: (event, ui) =>
+    @gmap.update ui.item.geocode
 
   afterApply: ()->
     @syncWithMap()
