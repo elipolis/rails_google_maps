@@ -7,11 +7,11 @@ class root.Autocomplete
   change: ()=>
   minChars: 2
 
-  constructor: (@selector)->
-    @$el = $(@selector)
+  constructor: (selector)->
+    @$el = $(selector)
 
   apply: ()->
-    $(@selector).autocomplete
+    @$el.autocomplete
       source: @source
       select: @select
       change: @change
@@ -27,9 +27,10 @@ class root.Autocomplete
 #  autoComplete.apply()
 class root.GmapAutocomplete extends Autocomplete
 
-  constructor: (@selector, @gmap)->
+  constructor: (selector, @gmap)->
+    super selector
     @gmap.onSucceed.push (address)=>
-      $(@selector).val address
+      @$el.val address
 
   source: (request, response) =>
     @gmap.searchGeocodes request.term, (results)->
@@ -46,13 +47,13 @@ class root.GmapAutocomplete extends Autocomplete
     @_addKeyDownHandlers()
 
   syncWithMap: ()->
-    @gmap.setMarker('address', $(@selector).val()) if $(@selector).val()
+    @gmap.setMarker('address', @$el.val()) if @$el.val()
 
   _addKeyDownHandlers: ()->
-    $(@selector).bind 'keydown', (event)=>
+    @$el.bind 'keydown', (event)=>
       if event.keyCode == 13
-        @gmap.setMarker  'address', $(_this.selector).val()
-        $(@selector).autocomplete "disable"
+        @gmap.setMarker  'address', @$el.val()
+        @$el.autocomplete "disable"
       else
-        $(@selector).autocomplete "enable"
+        @$el.autocomplete "enable"
 
