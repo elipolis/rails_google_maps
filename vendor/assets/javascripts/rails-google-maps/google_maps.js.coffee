@@ -55,11 +55,11 @@ class root.GoogleMap
     request = {}
     request[type] = value
     @geocoder.geocode request, (results, status)=>
-      _this.gmapErrors.cleanErrors()
+      @gmapErrors.cleanErrors()
       if status is google.maps.GeocoderStatus.OK
-        _this._succeed(results, update)
+        @_succeed(results, update)
       else
-        _this._failed(update, type, value)
+        @_failed(update, type, value)
       afterCallback()
 
   searchGeocodes: (term, callback)->
@@ -77,10 +77,10 @@ class root.GoogleMap
     return if @immutable
     unless @mapless
       google.maps.event.addListener @marker, 'dragend', () =>
-        _this.setMarker 'latLng', _this.marker.getPosition(), false
+        @setMarker 'latLng', @marker.getPosition(), false
       google.maps.event.addListener @map, 'click', (event) =>
-        _this.marker.setPosition event.latLng
-        _this.setMarker 'latLng', event.latLng, false
+        @marker.setPosition event.latLng
+        @setMarker 'latLng', event.latLng, false
 
   _succeed: (results, update)->
     if results[0]
