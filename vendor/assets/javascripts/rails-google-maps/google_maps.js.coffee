@@ -39,7 +39,7 @@ class root.GoogleMap
   apply: ()->
     if($(@mapSelector).length > 0)
       @map = new google.maps.Map $(@mapSelector)[0], @gmapOptions
-      @marker = new google.maps.Marker {map: @map, draggable: true}
+      @marker = new google.maps.Marker {map: @map, draggable: !@immutable}
     else
       @mapless = true
     @geocoder = new google.maps.Geocoder()
