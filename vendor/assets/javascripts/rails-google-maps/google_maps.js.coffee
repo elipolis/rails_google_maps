@@ -1,11 +1,8 @@
-root = exports ? this
-return unless google?
-
 # Google map class
 # Example:
 #   gmap = new GoogleMap
 #   gmap.apply()
-class root.GoogleMap
+class @GoogleMap
 
   #defines whether user can change map pin or not
   immutable: false
@@ -97,7 +94,7 @@ class root.GoogleMap
 #  GmapErrors.wrongInputText
 #  GmapErrors.incorrectLatLngText
 #  GmapErrors.incorrectAddressText(value)  - callback, incorrect address can be used inside
-class root.GmapErrors
+class @GmapErrors
 
   @incorrectLatLngText: "Woah... that's pretty remote! You're going to have to manually enter a place name."
 
@@ -129,7 +126,7 @@ class root.GmapErrors
   setError: (text)->
     $(@errorField).html(text)
 
-class root.LatLngContainer
+class LatLngContainer
   constructor: (latitudeInput, longitudeInput)->
     @latitudeInput = $(latitudeInput)
     @longitudeInput = $(longitudeInput)

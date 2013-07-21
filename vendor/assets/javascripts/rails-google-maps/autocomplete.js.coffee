@@ -1,6 +1,4 @@
-root = exports ? this
-
-class root.Autocomplete
+class @Autocomplete
   source: ()=>
     []
   select: ()=>
@@ -25,7 +23,7 @@ class root.Autocomplete
 #  gmap.apply()
 #  autoComplete = new GmapAutocomplete('#gmaps-input-address', gmap)
 #  autoComplete.apply()
-class root.GmapAutocomplete extends Autocomplete
+class @GmapAutocomplete extends Autocomplete
 
   constructor: (selector, @gmap)->
     super selector
