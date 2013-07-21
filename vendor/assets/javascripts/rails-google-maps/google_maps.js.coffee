@@ -35,7 +35,6 @@ class root.GoogleMap
       @saveLangLat = true
       @latLng = new LatLngContainer(options['latitudeInput'], options['longitudeInput'])
 
-
   apply: ()->
     if($(@mapSelector).length > 0)
       @map = new google.maps.Map $(@mapSelector)[0], @gmapOptions
@@ -69,6 +68,9 @@ class root.GoogleMap
       @map.fitBounds geocode.geometry.viewport
       @marker.setPosition geocode.geometry.location
     @latLng.store(geocode.geometry) if @saveLangLat
+
+  setFromLatLng: ()->
+    @setMarker('latLng', new google.maps.LatLng(@latLng.lat(), @latLng.lng()))
 
   _addListeners: ()->
     google.maps.event.addListener @marker, 'dragend', () =>
@@ -131,6 +133,15 @@ class root.LatLngContainer
   constructor: (latitudeInput, longitudeInput)->
     @latitudeInput = $(latitudeInput)
     @longitudeInput = $(longitudeInput)
+
+  lat: ()->
+    @latitudeInput.val()
+
+  lng: ()->
+    @longitudeInput.val()
+
+  googleLatLng: ()->
+    new google.maps.LatLng(@lat, @lng)
 
   store: (geometry)->
     @latitudeInput.val(geometry.location.lat())
