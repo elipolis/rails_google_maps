@@ -31,6 +31,11 @@ And include it in your ```application.js``` file after jquery:
 //= require rails-google-maps/google_maps
 ```
 
+Optionally you can use default styles for the map object:
+```
+// application.css
+*= require rails_google_maps
+```
 
 ## Usage
 ####SimpleForm usage:
